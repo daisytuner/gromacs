@@ -1,0 +1,50 @@
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+parameters:
+  timeout: 210
+  partitions:
+    - chamomile
+    - zinnia
+
+steps:
+  build: |
+    mkdir build
+    cd build
+    cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo -DGMX_BUILD_OWN_FFTW=ON -DREGRESSIONTEST_DOWNLOAD=ON -DCMAKE_INSTALL_PREFIX=./gromacs_install -DCMAKE_C_COMPILER=clang-15 -DCMAKE_CXX_COMPILER=clang++-15 -DGMX_GPU=CUDA
+    make -j20
+    make install
+    cd ..
+
+    . build/gromacs_install/bin/GMXRC
+    cd tests/physicalvalidation/systems/ens_argon_md_verlet_pme_vr/input
+    gmx grompp -f system.mdp -p system.top -c system.gro -o system.tpr
+    cd ../../../../../
+
+    cd tests/physicalvalidation/systems/int_water_md-vv_verlet_none_pme_pme/input
+    gmx grompp -f system.mdp -p system.top -c system.gro -o system.tpr
+    cd ../../../../../
+
+  run:
+    int_water_md-vv_verlet_none_pme_pme:
+      command: ./build/gromacs_install/bin/gmx mdrun -s tests/physicalvalidation/systems/int_water_md-vv_verlet_none_pme_pme/input/system.tpr -deffnm system  
+      measurements: 3
+      profiler: nsys
+      kernels: true
+      metrics:
+        - runtime
+        - flops_dp
+        - flops_sp
+    ens_argon_md_verlet_pme_vr:
+      command: ./build/gromacs_install/bin/gmx mdrun -s tests/physicalvalidation/systems/ens_argon_md_verlet_pme_vr/input/system.tpr -deffnm system  
+      measurements: 3
+      profiler: nsys
+      kernels: true
+      metrics:
+        - runtime
+        - flops_dp
+        - flops_sp
