@@ -8,8 +8,8 @@ on:
 parameters:
   timeout: 210
   partitions:
-    - chamomile
     - zinnia
+    - chamomile
 
 steps:
   build: |
@@ -32,19 +32,11 @@ steps:
   run:
     int_water_md-vv_verlet_none_pme_pme:
       command: ./build/gromacs_install/bin/gmx mdrun -s tests/physicalvalidation/systems/int_water_md-vv_verlet_none_pme_pme/input/system.tpr -deffnm system  
-      measurements: 3
+      measurements: 1
       profiler: nsys
       kernels: true
-      metrics:
-        - runtime
-        - flops_dp
-        - flops_sp
     ens_argon_md_verlet_pme_vr:
       command: ./build/gromacs_install/bin/gmx mdrun -s tests/physicalvalidation/systems/ens_argon_md_verlet_pme_vr/input/system.tpr -deffnm system  
-      measurements: 3
+      measurements: 1
       profiler: nsys
       kernels: true
-      metrics:
-        - runtime
-        - flops_dp
-        - flops_sp
