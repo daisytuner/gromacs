@@ -6,9 +6,9 @@ on:
     types: [opened, reopened, synchronize, ready_for_review]
 
 parameters:
-  timeout: 210
+  timeout: 60
   partitions:
-    - zinnia-ci
+    - zinnia
 
 steps:
   build: |
