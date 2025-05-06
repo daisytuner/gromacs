@@ -6,9 +6,8 @@ on:
     types: [opened, reopened, synchronize, ready_for_review]
 
 parameters:
-  timeout: 210
+  timeout: 60
   partitions:
-    - chamomile
     - zinnia
 
 steps:
@@ -33,7 +32,7 @@ steps:
   run:
     int_water_md-vv_verlet_none_pme_pme:
       command: ./build/gromacs_install/bin/gmx mdrun -s tests/physicalvalidation/systems/int_water_md-vv_verlet_none_pme_pme/input/system.tpr -deffnm system  
-      measurements: 3
+      measurements: 1
       profiler: perf
       metrics:
         - runtime
@@ -41,7 +40,7 @@ steps:
         - flops_sp
     ens_argon_md_verlet_pme_vr:
       command: ./build/gromacs_install/bin/gmx mdrun -s tests/physicalvalidation/systems/ens_argon_md_verlet_pme_vr/input/system.tpr -deffnm system  
-      measurements: 3
+      measurements: 1
       profiler: perf
       metrics:
         - runtime

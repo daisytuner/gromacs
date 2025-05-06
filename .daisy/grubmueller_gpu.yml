@@ -1,0 +1,25 @@
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+parameters:
+  timeout: 60
+  partitions:
+    - zinnia
+
+steps:
+  build: |
+    cmake -S . -B build -D CMAKE_BUILD_TYPE=RelWithDebInfo -D CMAKE_C_COMPILER=clang-15 -D CMAKE_CXX_COMPILER=clang++-15 -D GMX_BUILD_OWN_FFTW=ON -D GMX_GPU=CUDA
+    cmake --build build --parallel 20
+
+    curl -O https://apollon.miletic.net/benchMEM.zip
+    unzip benchMEM.zip
+
+  run:
+    benchMEM:
+      command: ./build/bin/gmx mdrun -maxh 0.2 -resethway -noconfout -cpt -1 -s benchMEM.tpr -nsteps -1  
+      measurements: 1
+      kernels: true
