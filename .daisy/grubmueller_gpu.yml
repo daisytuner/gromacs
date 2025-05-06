@@ -18,33 +18,8 @@ steps:
     curl -O https://apollon.miletic.net/benchMEM.zip
     unzip benchMEM.zip
 
-    curl -O https://apollon.miletic.net/benchRIB.zip
-    unzip benchRIB.zip
-
-    curl -O https://apollon.miletic.net/benchPEP.zip
-    unzip benchPEP.zip
-
-    curl -O https://apollon.miletic.net/benchPEP-h.zip
-    unzip benchPEP-h.zip
-
   run:
     benchMEM:
       command: ./build/bin/gmx mdrun -maxh 0.2 -resethway -noconfout -cpt -1 -s benchMEM.tpr -nsteps -1  
       measurements: 1
-      profiler: nsys
-      kernels: true
-    benchRIB:
-      command: ./build/bin/gmx mdrun -maxh 0.2 -resethway -noconfout -cpt -1 -s benchRIB.tpr -nsteps -1  
-      measurements: 1
-      profiler: nsys
-      kernels: true
-    benchPEP:
-      command: ./build/bin/gmx mdrun -maxh 0.2 -resethway -noconfout -cpt -1 -s benchPEP.tpr -nsteps -1  
-      measurements: 1
-      profiler: nsys
-      kernels: true
-    benchPEP-h:
-      command: ./build/bin/gmx mdrun -maxh 0.2 -resethway -noconfout -cpt -1 -s benchPEP-h.tpr -nsteps -1  
-      measurements: 1
-      profiler: nsys
       kernels: true
