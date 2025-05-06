@@ -9,6 +9,7 @@ parameters:
   timeout: 60
   partitions:
     - zinnia
+    - chamomile
 
 steps:
   build: |
@@ -22,6 +23,7 @@ steps:
     benchMEM:
       command: ./build/bin/gmx mdrun -maxh 0.2 -resethway -noconfout -cpt -1 -s benchMEM.tpr -nsteps -1  
       measurements: 1
+      profiler: perf
       metrics:
         - runtime
         - flops_dp
