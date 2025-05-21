@@ -42,6 +42,8 @@
 #ifndef GMX_APPLIED_FORCES_QMMMFORCEPROVIDER_H
 #define GMX_APPLIED_FORCES_QMMMFORCEPROVIDER_H
 
+#include <string>
+
 #include "gromacs/domdec/localatomset.h"
 #include "gromacs/mdtypes/forceoutput.h"
 #include "gromacs/mdtypes/iforceprovider.h"
@@ -112,6 +114,9 @@ private:
 };
 
 CLANG_DIAGNOSTIC_RESET
+
+//! Returns information for describing the CP2K QM/MM support
+std::string qmmmDescription();
 
 } // namespace gmx
 

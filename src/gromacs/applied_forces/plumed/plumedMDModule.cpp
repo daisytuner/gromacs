@@ -50,7 +50,6 @@
 #include "gromacs/mdrunutility/mdmodulesnotifiers.h"
 #include "gromacs/mdtypes/commrec.h"
 #include "gromacs/mdtypes/imdmodule.h"
-#include "gromacs/utility/binaryinformation.h"
 #include "gromacs/utility/keyvaluetreebuilder.h"
 
 #include "plumedOptions.h"
@@ -134,7 +133,8 @@ public:
         if (options_.active())
         {
             plumedForceProvider_ = std::make_unique<PlumedForceProvider>(options_.options());
-            forceProviders->addForceProvider(plumedForceProvider_.get(), "Plumed");
+            forceProviders->addForceProvider(plumedForceProvider_.get(),
+                                             std::string(PlumedModuleInfo::sc_name));
         }
     }
 
@@ -152,11 +152,10 @@ std::unique_ptr<IMDModule> PlumedModuleInfo::create()
 {
     return std::make_unique<PlumedMDModule>();
 }
-} // namespace gmx
 
-static const bool s_registeredBinaryInformation = []()
+std::string plumedDescription()
 {
-    gmx::BinaryInformationRegistry& registry = gmx::globalBinaryInformationRegistry();
-    registry.insert("Plumed support", "enabled");
-    return true;
-}();
+    return "enabled";
+}
+
+} // namespace gmx

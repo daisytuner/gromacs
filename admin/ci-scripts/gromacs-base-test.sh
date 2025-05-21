@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -e
 CMAKE=${CMAKE:-$(which cmake)}
+echo "Running on host:" $KUBERNETES_HOSTNAME
 cd $BUILD_DIR
 export UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1:suppressions=$CI_PROJECT_DIR/admin/ubsan-suppressions.txt
 # Needed to run MPI enabled code in the docker images, until we set up different users
@@ -40,6 +41,7 @@ fi
 if grep -qF 'AMD' <<< "$GPU_VENDOR"; then
     clinfo -l || true;
     rocm-smi || true;
+    export GPU_MAX_HW_QUEUES=2  # Prevent "amdgpu: Runlist is getting oversubscribed", Issue #5341
 fi
 if grep -qF 'INTEL' <<< "$GPU_VENDOR"; then
     sycl-ls || true;

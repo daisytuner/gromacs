@@ -53,7 +53,6 @@
 #include "gromacs/mdtypes/commrec.h"
 #include "gromacs/mdtypes/iforceprovider.h"
 #include "gromacs/mdtypes/imdmodule.h"
-#include "gromacs/utility/binaryinformation.h"
 #include "gromacs/utility/keyvaluetreebuilder.h"
 #include "gromacs/utility/stringutil.h"
 
@@ -208,12 +207,12 @@ public:
 
         // writing checkpoint data
         const auto checkpointDataWriting = [this](MDModulesWriteCheckpointData checkpointData)
-        { colvarsForceProvider_->writeCheckpointData(checkpointData, ColvarsModuleInfo::name_); };
+        { colvarsForceProvider_->writeCheckpointData(checkpointData, ColvarsModuleInfo::sc_name); };
         notifiers->checkpointingNotifier_.subscribe(checkpointDataWriting);
 
         // reading checkpoint data
         const auto checkpointDataReading = [this](MDModulesCheckpointReadingDataOnMain checkpointData)
-        { colvarsState_.readState(checkpointData.checkpointedData_, ColvarsModuleInfo::name_); };
+        { colvarsState_.readState(checkpointData.checkpointedData_, ColvarsModuleInfo::sc_name); };
         notifiers->checkpointingNotifier_.subscribe(checkpointDataReading);
 
         // Handle the atoms redistributed signal
@@ -277,13 +276,9 @@ std::unique_ptr<IMDModule> ColvarsModuleInfo::create()
     return std::make_unique<ColvarsMDModule>();
 }
 
-const std::string ColvarsModuleInfo::name_ = "colvars";
+std::string colvarsDescription()
+{
+    return formatString("enabled (version %s)", COLVARS_VERSION);
+}
 
 } // namespace gmx
-
-static const bool s_registeredBinaryInformation = []()
-{
-    gmx::BinaryInformationRegistry& registry = gmx::globalBinaryInformationRegistry();
-    registry.insert("Colvars support", gmx::formatString("enabled (version %s)", COLVARS_VERSION));
-    return true;
-}();
